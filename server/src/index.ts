@@ -8,11 +8,14 @@ import { roomManager } from './rooms/roomManager';
 const app = express();
 const httpServer = createServer(app);
 
-const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 const PORT = parseInt(process.env.PORT || '3001', 10);
 
+// Support comma-separated CLIENT_URL values e.g. "https://chaos-chess.vercel.app,http://localhost:5173"
+const rawClientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+const ALLOWED_ORIGINS = rawClientUrl.split(',').map((u) => u.trim());
+
 // ── Middleware ─────────────────────────────────────────────────────────────────
-app.use(cors({ origin: CLIENT_URL, credentials: true }));
+app.use(cors({ origin: ALLOWED_ORIGINS, credentials: true }));
 app.use(express.json());
 
 // ── Health check ───────────────────────────────────────────────────────────────
@@ -23,7 +26,7 @@ app.get('/health', (_req, res) => {
 // ── Socket.IO ─────────────────────────────────────────────────────────────────
 const io = new SocketServer(httpServer, {
   cors: {
-    origin: CLIENT_URL,
+    origin: ALLOWED_ORIGINS,
     methods: ['GET', 'POST'],
     credentials: true,
   },
@@ -45,6 +48,6 @@ io.on('connection', (socket) => {
 // ── Start ──────────────────────────────────────────────────────────────────────
 httpServer.listen(PORT, () => {
   console.log(`\n🚀 Chaos Chess server running on port ${PORT}`);
-  console.log(`   Client URL: ${CLIENT_URL}`);
+  console.log(`   Allowed Origins: ${ALLOWED_ORIGINS.join(', ')}`);
   console.log(`   Health:     http://localhost:${PORT}/health\n`);
 });

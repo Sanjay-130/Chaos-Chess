@@ -114,6 +114,7 @@ export interface RoomState {
 
 export interface CreateRoomPayload {
   nickname: string;
+  colorPreference?: 'white' | 'black' | 'random';
 }
 
 export interface JoinRoomPayload {

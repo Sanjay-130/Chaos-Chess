@@ -36,12 +36,23 @@ class RoomManager {
 
   // ── Room Creation ──────────────────────────────────────────────────────────
 
-  createRoom(socketId: string, nickname: string): { room: Room; color: Color } {
+  createRoom(socketId: string, nickname: string, colorPreference?: 'white' | 'black' | 'random'): { room: Room; color: Color } {
     const code = this.generateCode();
+
+    // Resolve preferred color: random picks a coin flip
+    let assignedColor: Color;
+    if (colorPreference === 'black') {
+      assignedColor = 'black';
+    } else if (colorPreference === 'random') {
+      assignedColor = Math.random() < 0.5 ? 'white' : 'black';
+    } else {
+      assignedColor = 'white'; // default
+    }
+
     const player: PlayerInfo = {
       socketId,
       nickname,
-      color: 'white',
+      color: assignedColor,
       isReady: false,
       isConnected: true,
     };
@@ -56,7 +67,7 @@ class RoomManager {
     };
 
     this.rooms.set(code, room);
-    return { room, color: 'white' };
+    return { room, color: assignedColor };
   }
 
   // ── Room Joining ───────────────────────────────────────────────────────────
@@ -80,8 +91,9 @@ class RoomManager {
     }
 
     if (room.players.length < 2) {
-      // Second player
-      const color: Color = 'black';
+      // Second player gets the opposite of the first player's color
+      const existingColor = room.players[0].color;
+      const color: Color = existingColor === 'white' ? 'black' : 'white';
       const player: PlayerInfo = {
         socketId,
         nickname,

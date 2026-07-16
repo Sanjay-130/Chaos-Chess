@@ -12,13 +12,13 @@ export function registerHandlers(io: SocketServer, socket: Socket): void {
   // ── create-room ────────────────────────────────────────────────────────────
   socket.on(SOCKET_EVENTS.CREATE_ROOM, (payload: CreateRoomPayload) => {
     try {
-      const { nickname } = payload;
+      const { nickname, colorPreference } = payload;
       if (!nickname?.trim()) {
         socket.emit(SOCKET_EVENTS.ERROR, { message: 'Nickname is required' });
         return;
       }
 
-      const { room, color } = roomManager.createRoom(socket.id, nickname.trim());
+      const { room, color } = roomManager.createRoom(socket.id, nickname.trim(), colorPreference);
       socket.join(room.code);
 
       socket.emit(SOCKET_EVENTS.ROOM_CREATED, {

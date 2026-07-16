@@ -1,4 +1,4 @@
-# Chaos Chess — Scrambled Multiplayer Chess Variant
+# 🚀 Chaos Chess — Scrambled Multiplayer Chess Variant
 
 A modern, responsive, real-time multiplayer chess platform built from scratch. While the layout, pieces, and ultimate objective (checkmate) are visually identical to traditional chess, the movement rules of the four major pieces—**Queen, Rook, Bishop, and Knight**—are randomly permuted before every single match.
 
@@ -11,6 +11,7 @@ A modern, responsive, real-time multiplayer chess platform built from scratch. W
     *   *Rook* $\rightarrow$ Knight, Rook, Bishop, or Queen
     *   *Bishop* $\rightarrow$ Knight, Rook, Bishop, or Queen
     *   *Knight* $\rightarrow$ Knight, Rook, Bishop, or Queen
+*   **Color Preference Selection**: When hosting a room, creators can select their color preference: **Play as White** (moves first), **Play as Black** (moves second), or **Random** (a coin flip determines the color). The second player who joins is automatically assigned the opposite color.
 *   **Unchanged Pieces**:
     *   **King**: Always moves normally (including castling checks).
     *   **Pawn**: Always moves normally (including double-step, captures, and en passant).
@@ -20,13 +21,29 @@ A modern, responsive, real-time multiplayer chess platform built from scratch. W
 
 ---
 
+## 🌎 Live Deployments
+
+Chaos Chess is fully hosted and accessible for free:
+- **Frontend Client (Vercel)**: `https://chaos-chess-client-521e.vercel.app`
+- **Backend Server (Render)**: `https://chaos-chess-server.onrender.com`
+
+---
+
+## ❤️ Enjoy, Share, & Play Responsibly
+
+Chaos Chess was built as a fun, mind-bending variant of the game we all know and love.
+*   **Share with Friends**: Create a private room, copy your room code or invite link, send it to a friend, and see who can master the chaos first!
+*   **Play Responsibly**: Please enjoy the website responsibly. To keep the platform fast and friendly for everyone, avoid opening excessive concurrent rooms, flooding connection sockets, or abusing the server's endpoints. Let's keep the community clean and fun for all chess fans!
+
+---
+
 ## 🛠️ Tech Stack
 
 ### Frontend (Client)
 *   **React** (v18) with **TypeScript**
 *   **Vite** (for fast bundling and development)
 *   **Tailwind CSS** (for styling under a custom design system theme)
-*   **react-chessboard** (purely as a visual layer for rendering pieces/squares)
+*   **react-chessboard** (for rendering pieces and squares with cursor snapping and speed animations)
 *   **Zustand** (lightweight state management for game state and UI overlays)
 *   **Framer Motion** (smooth layout transitions)
 *   **React Router** (declarative client-side routing)
@@ -36,6 +53,7 @@ A modern, responsive, real-time multiplayer chess platform built from scratch. W
 *   **Node.js** with **TypeScript**
 *   **Express** (routing, health check endpoints)
 *   **Socket.IO** (WebSockets server for real-time room communication and server-side validation)
+*   **tsc-alias** (resolves runtime package aliases for seamless ESM builds)
 
 ### Shared Directory
 *   Contains type-safe interfaces, constants, and event names compiled/shared across the frontend and backend.
@@ -64,7 +82,7 @@ chaos-chess/
 │   │   │   ├── moveValidator.ts # Check, checkmate, stalemate calculations
 │   │   │   └── gameManager.ts   # Game state state machine & server clocks
 │   │   ├── rooms/
-│   │   │   └── roomManager.ts   # Room creation, joining, spectator overflow, TTLs
+│   │   │   └── roomManager.ts   # Room creation, joining, spectator overflow, color allocation
 │   │   ├── socket/
 │   │   │   └── handlers.ts      # WebSockets event router handlers
 │   │   ├── utils/
@@ -93,7 +111,7 @@ chaos-chess/
 
 ---
 
-## 🚀 How to Run the Project
+## 🚀 How to Run the Project Locally
 
 ### Prerequisites
 Make sure you have [Node.js](https://nodejs.org/) installed (v18+ recommended).

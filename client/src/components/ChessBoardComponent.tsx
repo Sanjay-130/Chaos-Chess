@@ -171,6 +171,8 @@ export default function ChessBoardComponent() {
         customSquareStyles={customSquareStyles}
         customDarkSquareStyle={{ backgroundColor: '#131920' }}
         customLightSquareStyle={{ backgroundColor: '#1e2d3d' }}
+        animationDuration={150}
+        snapToCursor={true}
       />
     </div>
   );

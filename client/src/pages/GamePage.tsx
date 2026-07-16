@@ -85,7 +85,7 @@ export default function GamePage() {
   };
 
   return (
-    <div className="max-w-6xl w-full mx-auto px-4 py-6 animate-slide-up flex flex-col min-h-[90vh]">
+    <div className="max-w-6xl w-full mx-auto px-4 py-6 animate-fade-in flex flex-col min-h-[90vh]">
       {/* Promotion Modal Overlay */}
       <PromotionModal />
 

@@ -1,6 +1,11 @@
 import React from 'react';
+import { useGameStore } from '../store/gameStore';
 
 export default function ConnectionStatus() {
+  const isConnected = useGameStore((s) => s.isConnected);
+
+  if (isConnected) return null;
+
   return (
     <div
       className="flex items-center justify-center gap-3 text-xs font-bold py-2 z-50"

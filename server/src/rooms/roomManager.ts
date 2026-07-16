@@ -362,6 +362,41 @@ class RoomManager {
 
   // ── Disconnect Handling ────────────────────────────────────────────────────
 
+  leaveRoom(socketId: string): { code: string; nickname: string; gameState?: GameState } | null {
+    for (const [code, room] of this.rooms) {
+      const playerIdx = room.players.findIndex(p => p.socketId === socketId);
+      if (playerIdx !== -1) {
+        const player = room.players[playerIdx];
+
+        let newGameState: GameState | undefined;
+        if (room.phase === 'playing') {
+          newGameState = this.abandon(code, socketId) ?? undefined;
+        }
+
+        room.players.splice(playerIdx, 1);
+
+        if (room.players.length === 0 && room.spectators.length === 0) {
+          this.destroyRoom(code);
+        }
+
+        return { code, nickname: player.nickname, gameState: newGameState };
+      }
+
+      const specIdx = room.spectators.findIndex(s => s.socketId === socketId);
+      if (specIdx !== -1) {
+        const spec = room.spectators[specIdx];
+        room.spectators.splice(specIdx, 1);
+
+        if (room.players.length === 0 && room.spectators.length === 0) {
+          this.destroyRoom(code);
+        }
+
+        return { code, nickname: spec.nickname };
+      }
+    }
+    return null;
+  }
+
   handleDisconnect(socketId: string): { code: string; nickname: string; gameState?: GameState } | null {
     for (const [code, room] of this.rooms) {
       // Check players
@@ -387,6 +422,18 @@ class RoomManager {
       }
     }
     return null;
+  }
+
+  private destroyRoom(code: string): void {
+    const room = this.rooms.get(code);
+    if (!room) return;
+    this.stopGameTimer(code);
+    this.cancelCleanup(room);
+    if (room.countdownTimer) {
+      clearTimeout(room.countdownTimer);
+      room.countdownTimer = undefined;
+    }
+    this.rooms.delete(code);
   }
 
   private scheduleCleanup(room: Room): void {

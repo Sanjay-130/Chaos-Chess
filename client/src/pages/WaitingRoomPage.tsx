@@ -16,6 +16,7 @@ export default function WaitingRoomPage() {
     countdown,
     ruleMapping,
     nickname,
+    roomCode,
     resetAll,
   } = useGameStore();
 
@@ -23,16 +24,16 @@ export default function WaitingRoomPage() {
   const [copiedCode, setCopiedCode] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
 
-  // Reconnection guard
+  // Reconnection guard — only when still bound to this room (not after leaving)
   useEffect(() => {
-    if (!roomState && code) {
+    if (!roomState && code && roomCode === code) {
       if (nickname) {
         socket.emit(SOCKET_EVENTS.RECONNECT, { code, nickname });
       } else {
         navigate(`/join/${code}`);
       }
     }
-  }, [roomState, code, nickname, navigate]);
+  }, [roomState, roomCode, code, nickname, navigate]);
 
   // Navigate when game starts
   useEffect(() => {
@@ -293,9 +294,12 @@ export default function WaitingRoomPage() {
             )}
             <button
               onClick={() => {
-                socket.emit(SOCKET_EVENTS.LEAVE_ROOM, { code: roomState?.code || code });
+                const codeToLeave = roomState?.code || code;
                 resetAll();
                 navigate('/');
+                if (codeToLeave) {
+                  socket.emit(SOCKET_EVENTS.LEAVE_ROOM, { code: codeToLeave });
+                }
               }}
               className="w-full btn btn-secondary btn-lg justify-center mt-3 font-bold text-xs"
             >

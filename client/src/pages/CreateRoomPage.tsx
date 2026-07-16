@@ -28,9 +28,13 @@ export default function CreateRoomPage() {
   const [customInput, setCustomInput]     = useState('10');
   const [loading, setLoading]             = useState(false);
 
-  const { roomCode, setNickname }          = useGameStore();
+  const { roomCode, setNickname, resetAll } = useGameStore();
   const { errorMessage, setErrorMessage }  = useUIStore();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    resetAll();
+  }, [resetAll]);
 
   useEffect(() => {
     if (roomCode) navigate(`/room/${roomCode}`);

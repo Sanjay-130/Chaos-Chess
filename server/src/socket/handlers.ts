@@ -249,7 +249,7 @@ export function registerHandlers(io: SocketServer, socket: Socket): void {
   // ── leave-room ─────────────────────────────────────────────────────────────
   socket.on(SOCKET_EVENTS.LEAVE_ROOM, (payload: { code: string }) => {
     socket.leave(payload.code);
-    const result = roomManager.handleDisconnect(socket.id);
+    const result = roomManager.leaveRoom(socket.id);
     if (!result) return;
 
     const { code, nickname, gameState } = result as any;

@@ -51,16 +51,16 @@ export default function GamePage() {
     }
   };
 
-  // Reconnection check
+  // Reconnection check — only when still bound to this room (not after leaving)
   useEffect(() => {
-    if (!roomState && code) {
+    if (!roomState && code && roomCode === code) {
       if (nickname) {
         socket.emit(SOCKET_EVENTS.RECONNECT, { code, nickname });
       } else {
         navigate(`/join/${code}`);
       }
     }
-  }, [roomState, code, nickname, navigate]);
+  }, [roomState, roomCode, code, nickname, navigate]);
 
   // Redirect back to waiting room / countdown overlay if phase changes back
   useEffect(() => {
@@ -261,9 +261,12 @@ export default function GamePage() {
           {/* Leave Button */}
           <button
             onClick={() => {
-              socket.emit(SOCKET_EVENTS.LEAVE_ROOM, { code: roomCode });
+              const codeToLeave = roomCode ?? code;
               resetAll();
               navigate('/');
+              if (codeToLeave) {
+                socket.emit(SOCKET_EVENTS.LEAVE_ROOM, { code: codeToLeave });
+              }
             }}
             className="btn btn-secondary w-full justify-center mt-2"
           >

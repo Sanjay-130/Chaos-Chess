@@ -41,6 +41,7 @@ Chaos Chess is fully hosted and accessible for free:
 ## ❤️ Enjoy, Share, & Play Responsibly
 
 Chaos Chess was built as a fun, mind-bending variant of the game we all know and love.
+*   **Play Online**: Play the live game with your friends directly at [Chaos Chess Live](https://chaos-chess-client-521e.vercel.app)!
 *   **Share with Friends**: Create a private room, copy your room code or invite link, send it to a friend, and see who can master the chaos first!
 *   **Play Responsibly**: Please enjoy the website responsibly. To keep the platform fast and friendly for everyone, avoid opening excessive concurrent rooms, flooding connection sockets, or abusing the server's endpoints. Let's keep the community clean and fun for all chess fans!
 

@@ -288,6 +288,21 @@ class RoomManager {
     return room.gameState;
   }
 
+  abandon(code: string, socketId: string): GameState | null {
+    const room = this.rooms.get(code);
+    if (!room || !room.gameState || room.phase !== 'playing') return null;
+
+    const player = room.players.find(p => p.socketId === socketId);
+    if (!player) return null;
+
+    const winner: Color = player.color === 'white' ? 'black' : 'white';
+    room.gameState = { ...room.gameState, status: 'abandoned', winner };
+    room.phase = 'gameover';
+    this.stopGameTimer(code);
+
+    return room.gameState;
+  }
+
   // ── Draw ───────────────────────────────────────────────────────────────────
 
   offerDraw(code: string, socketId: string): string | null {
@@ -347,14 +362,20 @@ class RoomManager {
 
   // ── Disconnect Handling ────────────────────────────────────────────────────
 
-  handleDisconnect(socketId: string): { code: string; nickname: string } | null {
+  handleDisconnect(socketId: string): { code: string; nickname: string; gameState?: GameState } | null {
     for (const [code, room] of this.rooms) {
       // Check players
       const player = room.players.find(p => p.socketId === socketId);
       if (player) {
         player.isConnected = false;
         this.scheduleCleanup(room);
-        return { code, nickname: player.nickname };
+        
+        let newGameState = undefined;
+        if (room.phase === 'playing') {
+          newGameState = this.abandon(code, socketId) ?? undefined;
+        }
+
+        return { code, nickname: player.nickname, gameState: newGameState };
       }
 
       // Check spectators

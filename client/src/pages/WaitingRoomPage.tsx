@@ -16,6 +16,7 @@ export default function WaitingRoomPage() {
     countdown,
     ruleMapping,
     nickname,
+    resetAll,
   } = useGameStore();
 
   const { errorMessage, setErrorMessage } = useUIStore();
@@ -316,6 +317,16 @@ export default function WaitingRoomPage() {
                 Share the room code above to invite a friend
               </p>
             )}
+            <button
+              onClick={() => {
+                socket.emit(SOCKET_EVENTS.LEAVE_ROOM, { code: roomState?.code || code });
+                resetAll();
+                navigate('/');
+              }}
+              className="w-full btn btn-secondary btn-lg justify-center mt-3 font-bold text-xs"
+            >
+              LEAVE ROOM
+            </button>
           </div>
         )}
 

@@ -249,14 +249,10 @@ export function registerHandlers(io: SocketServer, socket: Socket): void {
   // ── leave-room ─────────────────────────────────────────────────────────────
   socket.on(SOCKET_EVENTS.LEAVE_ROOM, (payload: { code: string }) => {
     socket.leave(payload.code);
-  });
-
-  // ── disconnect ─────────────────────────────────────────────────────────────
-  socket.on('disconnect', () => {
     const result = roomManager.handleDisconnect(socket.id);
     if (!result) return;
 
-    const { code, nickname } = result;
+    const { code, nickname, gameState } = result as any;
     const room = roomManager.getRoom(code);
     if (!room) return;
 
@@ -264,5 +260,36 @@ export function registerHandlers(io: SocketServer, socket: Socket): void {
       roomState: roomManager.getRoomState(room),
       nickname,
     });
+
+    if (gameState) {
+      io.to(code).emit(SOCKET_EVENTS.GAME_OVER, {
+        gameState: strip(gameState),
+        reason: 'abandoned',
+        winner: gameState.winner,
+      });
+    }
+  });
+
+  // ── disconnect ─────────────────────────────────────────────────────────────
+  socket.on('disconnect', () => {
+    const result = roomManager.handleDisconnect(socket.id);
+    if (!result) return;
+
+    const { code, nickname, gameState } = result as any;
+    const room = roomManager.getRoom(code);
+    if (!room) return;
+
+    io.to(code).emit(SOCKET_EVENTS.PLAYER_DISCONNECTED, {
+      roomState: roomManager.getRoomState(room),
+      nickname,
+    });
+
+    if (gameState) {
+      io.to(code).emit(SOCKET_EVENTS.GAME_OVER, {
+        gameState: strip(gameState),
+        reason: 'abandoned',
+        winner: gameState.winner,
+      });
+    }
   });
 }

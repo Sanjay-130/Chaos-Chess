@@ -21,10 +21,58 @@ html {
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: #080b12;
+  background-color: #040814;
   color: #f0f6ff;
   min-height: 100vh;
   overflow-x: hidden;
+}
+
+/* ── Custom Galaxy/Vortex Background ────────────────────────────────────────── */
+.vortex-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -1;
+  background: radial-gradient(circle at 50% 50%, #0c2041 0%, #040814 60%);
+}
+
+.vortex-swirl {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150vw;
+  height: 150vw;
+  transform: translate(-50%, -50%);
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(6, 182, 212, 0.1) 60deg,
+    rgba(59, 130, 246, 0.3) 120deg,
+    transparent 180deg,
+    rgba(6, 182, 212, 0.1) 240deg,
+    rgba(59, 130, 246, 0.3) 300deg,
+    transparent 360deg
+  );
+  filter: blur(40px);
+  opacity: 0.8;
+}
+
+.stars-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 40px 70px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 50px 160px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 130px 80px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 160px 120px, #ffffff, rgba(0,0,0,0));
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  opacity: 0.3;
 }
 
 #root {
@@ -35,9 +83,9 @@ body {
 
 /* ── Scrollbar ────────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-track { background: #0d1117; }
-::-webkit-scrollbar-thumb { background: #1e2d3d; border-radius: 0; }
-::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+::-webkit-scrollbar-track { background: #0f172a; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
 
 /* ── Selection ────────────────────────────────────────────────────────────── */
 ::selection { background: rgba(37, 99, 235, 0.4); color: #f0f6ff; }
@@ -83,18 +131,37 @@ body {
 .btn-primary:hover:not(:disabled) {
   background: #3b82f6;
   border-color: #3b82f6;
-  box-shadow: 0 0 20px rgba(37,99,235,0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.4);
 }
 
 .btn-secondary {
   background: transparent;
   color: #f0f6ff;
-  border-color: #1e2d3d;
+  border-color: #334155;
 }
 .btn-secondary:hover:not(:disabled) {
-  background: #131920;
-  border-color: #2563eb;
+  background: #1e293b;
+  border-color: #3b82f6;
   color: #60a5fa;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 15px rgba(59, 130, 246, 0.3);
+}
+
+.btn-teal {
+  background: #06b6d4;
+  color: #ffffff;
+  border-radius: 9999px; /* Pill shape */
+  padding: 0.75rem 2.5rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: 1px solid #22d3ee;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 0 0 20px rgba(6, 182, 212, 0.4);
+}
+.btn-teal:hover:not(:disabled) {
+  background: #0891b2;
+  border-color: #06b6d4;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6), 0 0 30px rgba(6, 182, 212, 0.6);
+  transform: translateY(-1px);
 }
 
 .btn-danger {
@@ -131,8 +198,8 @@ body {
 .input {
   width: 100%;
   padding: 0.75rem 1rem;
-  background: #0d1117;
-  border: 1px solid #1e2d3d;
+  background: #1e293b;
+  border: 1px solid #334155;
   color: #f0f6ff;
   font-size: 0.9375rem;
   font-family: 'Inter', sans-serif;
@@ -142,25 +209,27 @@ body {
 }
 
 .input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37,99,235,0.15);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
 }
 
 .input::placeholder {
-  color: #3d5166;
+  color: #64748b;
 }
 
 /* ── Card ─────────────────────────────────────────────────────────────────── */
 .card {
-  background: #131920;
-  border: 1px solid #1e2d3d;
+  background: #1e293b;
+  border: 1px solid #334155;
   padding: 1.5rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(59, 130, 246, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 /* ── Panel ────────────────────────────────────────────────────────────────── */
 .panel {
-  background: #0d1117;
-  border: 1px solid #1e2d3d;
+  background: #1e293b;
+  border: 1px solid #334155;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), 0 0 10px rgba(59, 130, 246, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 /* ── Badge ────────────────────────────────────────────────────────────────── */

@@ -24,6 +24,20 @@ export default function RuleScreen() {
           </p>
         </div>
 
+        {/* How it works educational box */}
+        <div className="bg-accent-blue/5 border border-accent-blue/20 rounded-lg p-4 text-left space-y-2 text-xs">
+          <h3 className="font-bold text-accent-bright tracking-wider uppercase" style={{ fontSize: '10px' }}>How it works:</h3>
+          <p className="text-text-secondary leading-relaxed" style={{ fontSize: '11px' }}>
+            In Chaos Chess, the board looks normal, but the movement rules of the **Queen, Rook, Bishop, and Knight** are randomly swapped. Both players share the same rules.
+          </p>
+          <p className="text-text-secondary leading-relaxed font-semibold" style={{ fontSize: '11px' }}>
+            Example: If <span className="text-accent-bright">QUEEN ➔ KNIGHT</span>, your Queen moves exactly like a Knight.
+          </p>
+          <p className="text-text-dim" style={{ fontSize: '10px' }}>
+            * King and Pawns are unaffected and always move normally.
+          </p>
+        </div>
+
         <div className="space-y-3">
           {mappings.map((m) => (
             <div

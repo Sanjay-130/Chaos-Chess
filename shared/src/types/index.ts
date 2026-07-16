@@ -62,7 +62,8 @@ export type GameStatus =
   | 'draw'
   | 'resigned'
   | 'timeout'
-  | 'aborted';
+  | 'aborted'
+  | 'abandoned';
 
 export interface GameState {
   board: Board;

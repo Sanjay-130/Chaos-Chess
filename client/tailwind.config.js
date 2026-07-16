@@ -9,27 +9,29 @@ export default {
       },
       colors: {
         bg: {
-          primary: '#080b12',
-          secondary: '#0d1117',
-          elevated: '#131920',
-          card: '#161d27',
-          hover: '#1a2230',
+          primary: '#0f172a', // slate-900
+          secondary: '#1e293b', // slate-800
+          elevated: '#334155', // slate-700
+          card: '#1e293b',
+          hover: '#475569', // slate-600
         },
         border: {
-          DEFAULT: '#1e2d3d',
-          accent: '#2563eb',
-          dim: '#162030',
+          DEFAULT: '#334155',
+          accent: '#3b82f6',
+          dim: '#1e293b',
         },
         accent: {
           blue: '#2563eb',
           bright: '#3b82f6',
+          teal: '#06b6d4',
+          tealGlow: 'rgba(6, 182, 212, 0.4)',
           glow: 'rgba(37,99,235,0.3)',
         },
         text: {
           primary: '#f0f6ff',
-          secondary: '#7c8fa6',
-          dim: '#3d5166',
-          accent: '#60a5fa',
+          secondary: '#94a3b8',
+          dim: '#475569',
+          accent: '#06b6d4',
         },
         state: {
           check: '#ef4444',
@@ -46,6 +48,8 @@ export default {
         'pulse-blue': 'pulseBlue 2s ease-in-out infinite',
         'countdown': 'countdownPop 0.4s ease',
         'glow-check': 'glowCheck 1s ease-in-out infinite alternate',
+        'spin-slow': 'spin 30s linear infinite',
+        'pulse-teal': 'pulseTeal 2s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: {
@@ -68,6 +72,10 @@ export default {
         glowCheck: {
           from: { boxShadow: '0 0 8px rgba(239,68,68,0.3)' },
           to: { boxShadow: '0 0 20px rgba(239,68,68,0.6)' },
+        },
+        pulseTeal: {
+          '0%, 100%': { boxShadow: '0 0 0 0 rgba(6,182,212,0)' },
+          '50%': { boxShadow: '0 0 0 8px rgba(6,182,212,0.3)' },
         },
       },
     },

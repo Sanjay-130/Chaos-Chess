@@ -63,6 +63,10 @@ export default function GameOverOverlay() {
       title = 'ABORTED';
       desc  = 'Match aborted.';
       break;
+    case 'abandoned':
+      title = 'ABANDONED';
+      desc  = gameState.winner ? `${getWinnerName()} wins. Opponent left the room.` : 'Match abandoned.';
+      break;
   }
 
   // ── Rematch section logic ─────────────────────────────────────────────────

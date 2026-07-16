@@ -95,26 +95,21 @@ export default function WaitingRoomPage() {
           <div className="flex items-center gap-2">
             {isSpectator && <span className="badge badge-blue">SPECTATING</span>}
             {roomState.timeControl && (
-              <span className="badge border px-2 py-1 text-[10px] font-bold" style={{ borderColor: '#6366f1', color: '#818cf8', background: 'rgba(99, 102, 241, 0.1)' }}>
+              <span className="badge badge-blue">
                 {roomState.timeControl} MIN
               </span>
             )}
-            {/* Live player count pill */}
             <div
-              className="flex items-center gap-1.5 px-3 py-1 border text-xs font-bold tracking-wide"
-              style={{
-                background: bothPresent ? 'rgba(34,197,94,0.08)' : 'rgba(245,158,11,0.08)',
-                borderColor: bothPresent ? 'rgba(34,197,94,0.25)' : 'rgba(245,158,11,0.25)',
-                color: bothPresent ? '#4ade80' : '#fbbf24',
-              }}
+              className={`flex items-center gap-1.5 px-3 py-1 border text-xs font-bold tracking-wide ${
+                bothPresent
+                  ? 'bg-accent-blue/10 border-accent-blue/30 text-accent-bright'
+                  : 'bg-white/5 border-border text-text-secondary'
+              }`}
             >
               <span
-                className="w-1.5 h-1.5 rounded-full inline-block"
-                style={{
-                  background: bothPresent ? '#22c55e' : '#f59e0b',
-                  boxShadow: `0 0 5px ${bothPresent ? '#22c55e' : '#f59e0b'}`,
-                  animation: 'pulse 1.5s ease infinite',
-                }}
+                className={`w-1.5 h-1.5 rounded-full inline-block animate-pulse ${
+                  bothPresent ? 'bg-accent-bright shadow-[0_0_5px_#3b82f6]' : 'bg-text-secondary'
+                }`}
               />
               {players.length}/2
             </div>
@@ -133,10 +128,7 @@ export default function WaitingRoomPage() {
           <h2 className="label">INVITE FRIEND</h2>
           <div className="grid grid-cols-2 gap-3">
             {/* Room Code */}
-            <div
-              className="flex flex-col gap-3 p-4 border"
-              style={{ background: '#080b12', borderColor: '#1e2d3d' }}
-            >
+            <div className="flex flex-col gap-3 p-4 border bg-bg-secondary border-border">
               <div>
                 <div className="label text-[9px] mb-1">ROOM CODE</div>
                 <div className="text-2xl font-mono font-black tracking-[0.15em] text-gradient">
@@ -145,18 +137,16 @@ export default function WaitingRoomPage() {
               </div>
               <button
                 onClick={copyCode}
-                className="btn btn-secondary btn-sm w-full justify-center font-bold"
-                style={copiedCode ? { borderColor: '#22c55e', color: '#4ade80' } : {}}
+                className={`btn btn-secondary btn-sm w-full justify-center font-bold ${
+                  copiedCode ? 'border-accent-blue text-accent-bright' : ''
+                }`}
               >
                 {copiedCode ? '✓ COPIED' : 'COPY CODE'}
               </button>
             </div>
 
             {/* Invite Link */}
-            <div
-              className="flex flex-col gap-3 p-4 border"
-              style={{ background: '#080b12', borderColor: '#1e2d3d' }}
-            >
+            <div className="flex flex-col gap-3 p-4 border bg-bg-secondary border-border">
               <div>
                 <div className="label text-[9px] mb-1">INVITE LINK</div>
                 <div className="text-[10px] text-text-secondary font-mono truncate leading-relaxed">
@@ -166,8 +156,9 @@ export default function WaitingRoomPage() {
               </div>
               <button
                 onClick={copyInviteLink}
-                className="btn btn-secondary btn-sm w-full justify-center font-bold"
-                style={copiedLink ? { borderColor: '#22c55e', color: '#4ade80' } : {}}
+                className={`btn btn-secondary btn-sm w-full justify-center font-bold ${
+                  copiedLink ? 'border-accent-blue text-accent-bright' : ''
+                }`}
               >
                 {copiedLink ? '✓ COPIED' : 'COPY LINK'}
               </button>
@@ -189,13 +180,9 @@ export default function WaitingRoomPage() {
                 return (
                   <div
                     key={slot}
-                    className="flex items-center gap-4 p-4 border border-dashed"
-                    style={{ borderColor: '#1e2d3d', background: 'transparent' }}
+                    className="flex items-center gap-4 p-4 border border-dashed border-border bg-transparent"
                   >
-                    <div
-                      className="w-8 h-8 rounded-full border border-dashed flex items-center justify-center"
-                      style={{ borderColor: '#1e2d3d' }}
-                    >
+                    <div className="w-8 h-8 rounded-full border border-dashed border-border flex items-center justify-center">
                       <span className="text-text-dim text-xs">?</span>
                     </div>
                     <span className="text-xs text-text-dim tracking-widest font-semibold">
@@ -208,36 +195,23 @@ export default function WaitingRoomPage() {
               return (
                 <div
                   key={player.socketId}
-                  className="flex items-center justify-between p-4 border-l-2"
-                  style={{
-                    background: player.isReady
-                      ? 'rgba(34,197,94,0.04)'
+                  className={`flex items-center justify-between p-4 border-l-2 ${
+                    player.isReady
+                      ? 'bg-accent-blue/5 border-l-accent-blue border-accent-blue/20'
                       : isMe
-                      ? 'rgba(37,99,235,0.04)'
-                      : '#080b12',
-                    borderLeft: `2px solid ${
-                      player.isReady ? '#22c55e' : isMe ? '#2563eb' : '#1e2d3d'
-                    }`,
-                    border: `1px solid ${player.isReady ? 'rgba(34,197,94,0.2)' : isMe ? 'rgba(37,99,235,0.2)' : '#1e2d3d'}`,
-                    borderLeftWidth: '2px',
-                    borderLeftColor: player.isReady ? '#22c55e' : isMe ? '#2563eb' : '#1e2d3d',
-                  }}
+                      ? 'bg-accent-blue/5 border-l-accent-bright border-accent-blue/20'
+                      : 'bg-bg-secondary border-l-border border-border'
+                  }`}
                 >
                   {/* Left: avatar + name */}
                   <div className="flex items-center gap-3">
                     {/* Color piece avatar */}
                     <div
-                      className="w-9 h-9 flex items-center justify-center text-xl border"
-                      style={{
-                        background:
-                          player.color === 'white'
-                            ? 'rgba(240,246,255,0.06)'
-                            : 'rgba(37,99,235,0.08)',
-                        borderColor:
-                          player.color === 'white'
-                            ? 'rgba(240,246,255,0.15)'
-                            : 'rgba(37,99,235,0.25)',
-                      }}
+                      className={`w-9 h-9 flex items-center justify-center text-xl border ${
+                        player.color === 'white'
+                          ? 'bg-white/5 border-white/15'
+                          : 'bg-accent-blue/10 border-accent-blue/25'
+                      }`}
                     >
                       {colorIcon(player.color)}
                     </div>
@@ -251,8 +225,9 @@ export default function WaitingRoomPage() {
                           </span>
                         )}
                       </div>
-                      <div className="text-[10px] font-semibold tracking-wider mt-0.5"
-                        style={{ color: player.color === 'white' ? '#94a3b8' : '#60a5fa' }}>
+                      <div className={`text-[10px] font-semibold tracking-wider mt-0.5 ${
+                        player.color === 'white' ? 'text-text-secondary' : 'text-accent-light'
+                      }`}>
                         {colorLabel(player.color)} PIECES
                       </div>
                     </div>
@@ -277,8 +252,7 @@ export default function WaitingRoomPage() {
                 {spectators.map((s) => (
                   <div
                     key={s.socketId}
-                    className="flex items-center gap-1.5 px-2.5 py-1 text-xs border"
-                    style={{ borderColor: '#1e2d3d', background: '#080b12' }}
+                    className="flex items-center gap-1.5 px-2.5 py-1 text-xs border border-border bg-bg-secondary"
                   >
                     <span className="conn-dot connected" />
                     <span className="text-text-secondary font-semibold">{s.nickname}</span>

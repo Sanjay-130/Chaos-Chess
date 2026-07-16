@@ -201,7 +201,6 @@ export default function GamePage() {
             <button
               onClick={() => setShowReview(true)}
               className="btn btn-primary w-full justify-center mt-2"
-              style={{ background: 'linear-gradient(135deg, #1e3a5f, #2563eb)' }}
             >
               🔍 REVIEW GAME
             </button>
@@ -216,7 +215,6 @@ export default function GamePage() {
                   <button
                     onClick={handleRequestRematch}
                     className="btn btn-primary w-full justify-center text-xs"
-                    style={{ background: 'linear-gradient(135deg, #166534, #22c55e)' }}
                   >
                     🔄 REQUEST REMATCH AGAIN
                   </button>
@@ -234,7 +232,6 @@ export default function GamePage() {
                     <button
                       onClick={handleRequestRematch}
                       className="btn btn-primary justify-center text-xs font-bold"
-                      style={{ background: 'linear-gradient(135deg, #166534, #22c55e)' }}
                     >
                       ACCEPT
                     </button>
@@ -254,7 +251,6 @@ export default function GamePage() {
                 <button
                   onClick={handleRequestRematch}
                   className="btn btn-primary w-full justify-center font-bold text-xs"
-                  style={{ background: 'linear-gradient(135deg, #166534, #22c55e)' }}
                 >
                   🔄 REMATCH
                 </button>

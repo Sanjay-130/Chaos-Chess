@@ -92,8 +92,8 @@ export default function GameReview({ onClose }: GameReviewProps) {
   // Highlight the squares involved in the current move
   const customSquareStyles: Record<string, React.CSSProperties> = {};
   if (reviewIndex > 0 && currentMove) {
-    customSquareStyles[indexToSquare(currentMove.from)] = { backgroundColor: 'rgba(234, 179, 8, 0.35)' };
-    customSquareStyles[indexToSquare(currentMove.to)]   = { backgroundColor: 'rgba(234, 179, 8, 0.55)' };
+    customSquareStyles[indexToSquare(currentMove.from)] = { backgroundColor: 'rgba(59, 130, 246, 0.25)' };
+    customSquareStyles[indexToSquare(currentMove.to)]   = { backgroundColor: 'rgba(59, 130, 246, 0.4)' };
   }
 
   const moveListItems = Array.from({ length: Math.ceil(totalMoves / 2) }).map((_, i) => {
@@ -143,8 +143,8 @@ export default function GameReview({ onClose }: GameReviewProps) {
                 boardOrientation={playerColor === 'black' ? 'black' : 'white'}
                 arePiecesDraggable={false}
                 customSquareStyles={customSquareStyles}
-                customDarkSquareStyle={{ backgroundColor: '#131920' }}
-                customLightSquareStyle={{ backgroundColor: '#1e2d3d' }}
+                customDarkSquareStyle={{ backgroundColor: '#1a1a1a' }}
+                customLightSquareStyle={{ backgroundColor: '#2a2a2a' }}
                 animationDuration={150}
               />
 
@@ -194,22 +194,15 @@ export default function GameReview({ onClose }: GameReviewProps) {
                   return (
                     <div
                       key={piece}
-                      className="flex items-center justify-between px-2 py-1.5 rounded text-xs font-mono"
-                      style={{
-                        background: isSwapped ? 'rgba(99,102,241,0.1)' : 'rgba(255,255,255,0.03)',
-                        border: `1px solid ${isSwapped ? 'rgba(99,102,241,0.35)' : '#1e2d3d'}`,
-                      }}
+                      className={`flex items-center justify-between px-2 py-1.5 text-xs font-mono border ${
+                        isSwapped ? 'bg-accent-blue/10 border-accent-blue/40' : 'bg-white/[0.03] border-border'
+                      }`}
                     >
-                      <span style={{ color: isSwapped ? '#a5b4fc' : '#7c8fa6' }}>
+                      <span className={isSwapped ? 'text-accent-light' : 'text-text-secondary'}>
                         {pieceIcons[piece]} {piece.toUpperCase()}
                       </span>
-                      <span style={{ color: '#3d5166' }}>moves like</span>
-                      <span
-                        style={{
-                          color: isSwapped ? '#f0f6ff' : '#7c8fa6',
-                          fontWeight: isSwapped ? 700 : 400,
-                        }}
-                      >
+                      <span className="text-text-dim">moves like</span>
+                      <span className={`${isSwapped ? 'text-white font-bold' : 'text-text-secondary'}`}>
                         {pieceIcons[movesLike]} {movesLike.toUpperCase()}{isSwapped ? ' ⚡' : ''}
                       </span>
                     </div>
@@ -228,24 +221,22 @@ export default function GameReview({ onClose }: GameReviewProps) {
                     <span className="text-text-dim font-mono">{num}.</span>
                     <button
                       onClick={() => setReviewIndex(white.idx)}
-                      className="text-left px-2 py-1 font-mono rounded transition-colors"
-                      style={{
-                        background: reviewIndex === white.idx ? 'rgba(37, 99, 235, 0.25)' : 'transparent',
-                        color:      reviewIndex === white.idx ? '#f0f6ff' : '#7c8fa6',
-                        border:     reviewIndex === white.idx ? '1px solid rgba(37,99,235,0.4)' : '1px solid transparent',
-                      }}
+                      className={`text-left px-2 py-1 font-mono transition-colors border ${
+                        reviewIndex === white.idx
+                          ? 'bg-accent-blue/25 text-white border-accent-blue/40'
+                          : 'bg-transparent text-text-secondary border-transparent'
+                      }`}
                     >
                       {white.notation}
                     </button>
                     <button
                       onClick={() => { if (black.notation) setReviewIndex(black.idx); }}
                       disabled={!black.notation}
-                      className="text-left px-2 py-1 font-mono rounded transition-colors"
-                      style={{
-                        background: reviewIndex === black.idx ? 'rgba(37, 99, 235, 0.25)' : 'transparent',
-                        color:      reviewIndex === black.idx ? '#f0f6ff' : '#7c8fa6',
-                        border:     reviewIndex === black.idx ? '1px solid rgba(37,99,235,0.4)' : '1px solid transparent',
-                      }}
+                      className={`text-left px-2 py-1 font-mono transition-colors border ${
+                        reviewIndex === black.idx
+                          ? 'bg-accent-blue/25 text-white border-accent-blue/40'
+                          : 'bg-transparent text-text-secondary border-transparent'
+                      }`}
                     >
                       {black.notation}
                     </button>

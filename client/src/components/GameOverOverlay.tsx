@@ -106,10 +106,7 @@ export default function GameOverOverlay() {
       const oppName = opp?.nickname ?? 'Opponent';
       return (
         <div className="space-y-3">
-          <div
-            className="flex items-center gap-2 p-3 border text-sm font-semibold"
-            style={{ borderColor: '#6366f1', background: 'rgba(99,102,241,0.08)', color: '#a5b4fc' }}
-          >
+          <div className="flex items-center gap-2 p-3 border text-sm font-semibold border-accent-blue/40 bg-accent-blue/10 text-accent-bright">
             <span>🔄</span>
             <span>{oppName} wants a rematch!</span>
           </div>
@@ -123,7 +120,6 @@ export default function GameOverOverlay() {
             <button
               onClick={handleRequestRematch}
               className="btn btn-primary justify-center font-bold"
-              style={{ background: 'linear-gradient(135deg,#166534,#22c55e)' }}
             >
               ACCEPT ✓
             </button>
@@ -136,10 +132,7 @@ export default function GameOverOverlay() {
     if (iHaveVoted) {
       return (
         <div className="space-y-3">
-          <div
-            className="flex items-center gap-2 p-3 border text-sm font-semibold"
-            style={{ borderColor: '#f59e0b', background: 'rgba(245,158,11,0.08)', color: '#fbbf24' }}
-          >
+          <div className="flex items-center gap-2 p-3 border text-sm font-semibold border-border bg-white/5 text-text-secondary">
             <span className="conn-dot connecting" style={{ width: 8, height: 8 }} />
             <span>Rematch requested — waiting for opponent...</span>
           </div>
@@ -158,7 +151,6 @@ export default function GameOverOverlay() {
       <button
         onClick={handleRequestRematch}
         className="btn btn-primary w-full justify-center font-bold tracking-wider"
-        style={{ background: 'linear-gradient(135deg,#1e3a5f,#2563eb)' }}
       >
         🔄 REQUEST REMATCH
       </button>
@@ -173,22 +165,7 @@ export default function GameOverOverlay() {
         <button
           onClick={() => setDismissed(true)}
           title="Dismiss — use Review Game to analyse the match"
-          style={{
-            position: 'absolute', top: 10, right: 10,
-            background: 'transparent', border: '1px solid #1e2d3d',
-            color: '#7c8fa6', borderRadius: 4,
-            width: 26, height: 26, cursor: 'pointer',
-            fontSize: 14, lineHeight: '24px', textAlign: 'center',
-            transition: 'all 0.15s ease',
-          }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLButtonElement).style.borderColor = '#60a5fa';
-            (e.currentTarget as HTMLButtonElement).style.color = '#f0f6ff';
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLButtonElement).style.borderColor = '#1e2d3d';
-            (e.currentTarget as HTMLButtonElement).style.color = '#7c8fa6';
-          }}
+          className="absolute top-2.5 right-2.5 w-[26px] h-[26px] flex items-center justify-center text-sm border border-border text-text-secondary hover:border-accent-blue hover:text-white transition-all cursor-pointer bg-transparent"
         >
           ✕
         </button>

@@ -7,59 +7,70 @@ export default function RuleScreen() {
   if (!ruleMapping || countdown === null) return null;
 
   const mappings = [
-    { name: 'Queen', mapsTo: ruleMapping.queen },
-    { name: 'Rook', mapsTo: ruleMapping.rook },
-    { name: 'Bishop', mapsTo: ruleMapping.bishop },
-    { name: 'Knight', mapsTo: ruleMapping.knight },
+    { name: 'Queen',  icon: '♛', mapsTo: ruleMapping.queen  },
+    { name: 'Rook',   icon: '♜', mapsTo: ruleMapping.rook   },
+    { name: 'Bishop', icon: '♝', mapsTo: ruleMapping.bishop },
+    { name: 'Knight', icon: '♞', mapsTo: ruleMapping.knight },
   ];
 
+  const pieceIcon: Record<string, string> = {
+    queen: '♛', rook: '♜', bishop: '♝', knight: '♞',
+  };
+
   return (
-    <div className="fixed inset-0 bg-bg-primary/95 flex flex-col items-center justify-center z-[150] animate-fade-in p-6">
-      <div className="max-w-md w-full panel p-8 border-2 border-accent-blue space-y-8 text-center">
+    <div className="fixed inset-0 flex flex-col items-center justify-center z-[150] animate-fade-in p-6 bg-black/95 backdrop-blur-xl">
+      <div className="max-w-sm w-full space-y-6 text-center border border-accent-blue bg-bg-card p-8">
+        {/* Header */}
         <div>
-          <span className="badge badge-amber font-bold mb-2">RULES GENERATED</span>
-          <h1 className="text-3xl font-black tracking-wider text-text-primary">TODAY'S RULES</h1>
-          <p className="text-xs text-text-secondary mt-1">
-            Major pieces inherit the movement abilities below.
-          </p>
+          <div className="section-title justify-center mb-3">Rules Generated</div>
+          <h1 className="text-2xl font-black tracking-widest text-white">TODAY'S CHAOS</h1>
+          <p className="text-xs text-text-secondary mt-1">Both players share these movement rules</p>
         </div>
 
-        {/* How it works educational box */}
-        <div className="bg-accent-blue/5 border border-accent-blue/20 rounded-lg p-4 text-left space-y-2 text-xs">
-          <h3 className="font-bold text-accent-bright tracking-wider uppercase" style={{ fontSize: '10px' }}>How it works:</h3>
-          <p className="text-text-secondary leading-relaxed" style={{ fontSize: '11px' }}>
-            In Chaos Chess, the board looks normal, but the movement rules of the **Queen, Rook, Bishop, and Knight** are randomly swapped. Both players share the same rules.
+        {/* How it works */}
+        <div className="text-left p-4 space-y-2 text-xs bg-accent-blue/5 border border-accent-blue/20">
+          <div className="text-[10px] font-bold text-accent-bright tracking-widest uppercase">How It Works</div>
+          <p className="text-text-secondary leading-relaxed">
+            The board looks normal, but the movements of <span className="text-white font-semibold">Queen, Rook, Bishop & Knight</span> are randomly swapped.
           </p>
-          <p className="text-text-secondary leading-relaxed font-semibold" style={{ fontSize: '11px' }}>
-            Example: If <span className="text-accent-bright">QUEEN ➔ KNIGHT</span>, your Queen moves exactly like a Knight.
+          <p className="text-text-secondary leading-relaxed font-semibold">
+            Example: <span className="text-accent-bright">QUEEN ➔ KNIGHT</span> means your Queen moves exactly like a Knight.
           </p>
-          <p className="text-text-dim" style={{ fontSize: '10px' }}>
-            * King and Pawns are unaffected and always move normally.
-          </p>
+          <p className="text-text-dim text-[10px]">* King and Pawns always move normally.</p>
         </div>
 
-        <div className="space-y-3">
-          {mappings.map((m) => (
-            <div
-              key={m.name}
-              className="panel px-4 py-3 flex items-center justify-between font-mono bg-bg-secondary"
-            >
-              <div className="flex items-center gap-2">
-                <span className="text-text-primary font-bold">{m.name.toUpperCase()}</span>
+        {/* Mappings */}
+        <div className="space-y-2">
+          {mappings.map((m) => {
+            const isSwapped = m.name.toLowerCase() !== m.mapsTo.toLowerCase();
+            return (
+              <div
+                key={m.name}
+                className={`flex items-center justify-between px-4 py-3 border ${
+                  isSwapped ? 'bg-accent-blue/10 border-accent-blue/40' : 'bg-white/[0.02] border-border'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-xl opacity-80">{m.icon}</span>
+                  <span className="text-sm font-bold tracking-wider text-white">{m.name.toUpperCase()}</span>
+                </div>
+                <span className="text-text-dim text-lg">➔</span>
+                <div className="flex items-center gap-3">
+                  <span className={`text-sm font-bold tracking-wider ${isSwapped ? 'text-accent-bright' : 'text-text-secondary'}`}>
+                    {m.mapsTo.toUpperCase()}
+                  </span>
+                  <span className="text-xl opacity-80">{pieceIcon[m.mapsTo.toLowerCase()] || '?'}</span>
+                  {isSwapped && <span className="text-[9px] text-accent-bright font-bold">⚡ SWAPPED</span>}
+                </div>
               </div>
-              <span className="text-text-dim">➔</span>
-              <div className="flex items-center gap-2">
-                <span className="text-accent-bright font-bold">{m.mapsTo.toUpperCase()}</span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        <div className="border-t border-border-dim pt-6 space-y-2">
-          <div className="text-xs tracking-widest text-text-dim font-bold uppercase">
-            MATCH STARTS IN
-          </div>
-          <div className="text-6xl font-mono font-black text-accent-bright animate-countdown">
+        {/* Countdown */}
+        <div className="pt-4 space-y-1 border-t border-border">
+          <div className="text-[9px] tracking-[0.3em] text-text-secondary font-bold uppercase">Match starts in</div>
+          <div className="text-6xl font-mono font-black animate-countdown text-accent-bright">
             {countdown}
           </div>
         </div>

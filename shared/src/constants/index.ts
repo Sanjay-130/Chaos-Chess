@@ -36,6 +36,7 @@ export const SOCKET_EVENTS = {
   DRAW_OFFER: 'draw-offer',
   DRAW_RESPONSE: 'draw-response',
   PLAY_AGAIN: 'play-again',
+  DECLINE_REMATCH: 'decline-rematch',
   RECONNECT: 'reconnect',
 
   // Server → Client
@@ -52,6 +53,7 @@ export const SOCKET_EVENTS = {
   ERROR: 'error',
   PLAYER_DISCONNECTED: 'player-disconnected',
   PLAYER_RECONNECTED: 'player-reconnected',
+  REMATCH_DECLINED: 'rematch-declined',
   SPECTATOR_JOINED: 'spectator-joined',
   SPECTATOR_LEFT: 'spectator-left',
 } as const;

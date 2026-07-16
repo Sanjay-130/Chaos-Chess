@@ -1,11 +1,24 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useUIStore } from '../store/uiStore';
 
 export default function LandingPage() {
+  const { soundEnabled, setSoundEnabled } = useUIStore();
   return (
     <div className="max-w-4xl mx-auto px-6 py-12 flex flex-col items-center text-center animate-slide-up">
-      <div className="mb-4">
+      <div className="mb-4 flex items-center gap-4">
         <span className="badge badge-blue">V1.0.0 ACTIVE</span>
+        <button
+          onClick={() => setSoundEnabled(!soundEnabled)}
+          className="badge border cursor-pointer hover:bg-bg-hover transition-colors"
+          style={{
+            borderColor: soundEnabled ? '#22c55e' : '#ef4444',
+            color: soundEnabled ? '#4ade80' : '#f87171',
+            background: 'transparent',
+          }}
+        >
+          {soundEnabled ? '🔊 SOUND ON' : '🔇 SOUND OFF'}
+        </button>
       </div>
       <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-6">
         CHAOS <span className="text-accent-bright font-medium">CHESS</span>

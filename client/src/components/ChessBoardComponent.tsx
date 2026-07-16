@@ -126,6 +126,20 @@ export default function ChessBoardComponent() {
   // Build custom square styles for highlight/selected states
   const customSquareStyles: Record<string, React.CSSProperties> = {};
 
+  // Highlight last move (yellow) — applied first so selection/check can override
+  const lastMove = gameState.moveHistory.length > 0
+    ? gameState.moveHistory[gameState.moveHistory.length - 1]
+    : null;
+
+  if (lastMove) {
+    customSquareStyles[indexToSquare(lastMove.from)] = {
+      backgroundColor: 'rgba(234, 179, 8, 0.30)',
+    };
+    customSquareStyles[indexToSquare(lastMove.to)] = {
+      backgroundColor: 'rgba(234, 179, 8, 0.48)',
+    };
+  }
+
   if (selectedSquare) {
     customSquareStyles[selectedSquare] = {
       backgroundColor: 'rgba(37, 99, 235, 0.4)',
@@ -171,8 +185,8 @@ export default function ChessBoardComponent() {
         customSquareStyles={customSquareStyles}
         customDarkSquareStyle={{ backgroundColor: '#131920' }}
         customLightSquareStyle={{ backgroundColor: '#1e2d3d' }}
-        animationDuration={150}
-        snapToCursor={true}
+        animationDuration={200}
+        customDropSquareStyle={{ boxShadow: 'inset 0 0 1px 6px rgba(255,255,255,0.75)' }}
       />
     </div>
   );

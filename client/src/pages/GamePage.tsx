@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGameStore } from '../store/gameStore';
 import { useUIStore } from '../store/uiStore';
@@ -12,10 +12,12 @@ import MoveHistory from '../components/MoveHistory';
 import PromotionModal from '../components/PromotionModal';
 import GameOverOverlay from '../components/GameOverOverlay';
 import SpectatorBadge from '../components/SpectatorBadge';
+import GameReview from '../components/GameReview';
 
 export default function GamePage() {
   const { code } = useParams<{ code: string }>();
   const navigate = useNavigate();
+  const [showReview, setShowReview] = useState(false);
 
   const {
     roomState,
@@ -86,6 +88,9 @@ export default function GamePage() {
 
   return (
     <div className="max-w-6xl w-full mx-auto px-4 py-6 animate-fade-in flex flex-col min-h-[90vh]">
+      {/* Game Review Modal */}
+      {showReview && <GameReview onClose={() => setShowReview(false)} />}
+
       {/* Promotion Modal Overlay */}
       <PromotionModal />
 
@@ -170,6 +175,17 @@ export default function GamePage() {
                 RESIGN
               </button>
             </div>
+          )}
+
+          {/* Review Game Button (visible after game ends) */}
+          {gameState.status !== 'playing' && gameState.moveHistory.length > 0 && (
+            <button
+              onClick={() => setShowReview(true)}
+              className="btn btn-primary w-full justify-center mt-2"
+              style={{ background: 'linear-gradient(135deg, #1e3a5f, #2563eb)' }}
+            >
+              🔍 REVIEW GAME
+            </button>
           )}
 
           {/* Leave Button */}

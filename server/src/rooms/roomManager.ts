@@ -22,9 +22,16 @@ interface Room {
   countdownTimer?: ReturnType<typeof setTimeout>;
   drawOfferedBy?: string; // socketId
   previousRuleMapping?: any;
+  timeControl: number; // in minutes
 }
 
 // ─── Room Manager ─────────────────────────────────────────────────────────────
+
+/** Strip server-only fields before sending GameState to clients */
+function toClientGameState(gs: GameState): GameState {
+  const { positionCounts: _dropped, ...rest } = gs;
+  return rest as GameState;
+}
 
 class RoomManager {
   private rooms = new Map<string, Room>();
@@ -36,7 +43,7 @@ class RoomManager {
 
   // ── Room Creation ──────────────────────────────────────────────────────────
 
-  createRoom(socketId: string, nickname: string, colorPreference?: 'white' | 'black' | 'random'): { room: Room; color: Color } {
+  createRoom(socketId: string, nickname: string, colorPreference?: 'white' | 'black' | 'random', timeControl: number = 10): { room: Room; color: Color } {
     const code = this.generateCode();
 
     // Resolve preferred color: random picks a coin flip
@@ -64,6 +71,7 @@ class RoomManager {
       phase: 'waiting',
       gameState: null,
       playAgainVotes: new Set(),
+      timeControl,
     };
 
     this.rooms.set(code, room);
@@ -180,11 +188,11 @@ class RoomManager {
     if (!room) return;
 
     room.phase = 'playing';
-    room.gameState = createInitialGameState(ruleMapping);
+    room.gameState = createInitialGameState(ruleMapping, room.timeControl * 60 * 1000);
 
     const roomState = this.getRoomState(room);
     this.io.to(code).emit(SOCKET_EVENTS.GAME_STARTED, {
-      gameState: room.gameState,
+      gameState: toClientGameState(room.gameState),
       roomState,
     });
 
@@ -316,6 +324,12 @@ class RoomManager {
     return room.playAgainVotes.size >= playerCount && playerCount === 2;
   }
 
+  clearPlayAgainVotes(code: string): void {
+    const room = this.rooms.get(code);
+    if (!room) return;
+    room.playAgainVotes = new Set();
+  }
+
   resetForNewGame(code: string): Room | null {
     const room = this.rooms.get(code);
     if (!room) return null;
@@ -383,8 +397,9 @@ class RoomManager {
       players: room.players,
       spectators: room.spectators,
       phase: room.phase,
-      gameState: room.gameState,
+      gameState: room.gameState ? toClientGameState(room.gameState) : null,
       playAgainVotes: [...room.playAgainVotes],
+      timeControl: room.timeControl,
     };
   }
 

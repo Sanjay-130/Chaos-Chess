@@ -9,12 +9,26 @@ import { generateLegalMoves, isInCheck, detectGameEnd } from './moveValidator';
 import { generateRuleMapping } from './ruleGenerator';
 import { generateNotation } from '../utils/notation';
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function getBoardKey(board: Board, turn: Color, castlingRights: CastlingRights, enPassantSquare: number | null): string {
+  let fen = '';
+  for (let i = 0; i < 64; i++) {
+    const p = board[i];
+    fen += p ? (p.color === 'white' ? p.type[0].toUpperCase() : p.type[0]) : '.';
+  }
+  fen += `_${turn}_${castlingRights.whiteKingside ? 'K' : ''}${castlingRights.whiteQueenside ? 'Q' : ''}${castlingRights.blackKingside ? 'k' : ''}${castlingRights.blackQueenside ? 'q' : ''}_${enPassantSquare ?? '-'}`;
+  return fen;
+}
+
 // ─── Game Manager ─────────────────────────────────────────────────────────────
 
-export function createInitialGameState(ruleMapping: RuleMapping): GameState {
+export function createInitialGameState(ruleMapping: RuleMapping, initialTimerMs: number = DEFAULT_TIMER_MS): GameState {
   const board = createInitialBoard();
   const castlingRights = initialCastlingRights();
   const legalMoves = generateLegalMoves(board, 'white', ruleMapping, castlingRights, null);
+
+  const initialKey = getBoardKey(board, 'white', castlingRights, null);
 
   return {
     board,
@@ -29,8 +43,9 @@ export function createInitialGameState(ruleMapping: RuleMapping): GameState {
     status: 'playing',
     isCheck: false,
     legalMoves: legalMoves.map(m => ({ from: m.from, to: m.to, promotion: m.promotion })),
-    timers: { white: DEFAULT_TIMER_MS, black: DEFAULT_TIMER_MS },
+    timers: { white: initialTimerMs, black: initialTimerMs },
     lastMoveTimestamp: Date.now(),
+    positionCounts: { [initialKey]: 1 },
   };
 }
 
@@ -107,8 +122,14 @@ export function applyMove(
     }
   }
 
-  // 50-move rule (draw by repetition not tracked in V1)
-  if (halfMoveClock >= 100) {
+  // Remove 50-move rule to allow n moves as per user request
+
+  // Track position for 3-fold repetition
+  const newPositionCounts = { ...state.positionCounts };
+  const nextKey = getBoardKey(board, nextTurn, newCastlingRights, newEnPassantSquare);
+  newPositionCounts[nextKey] = (newPositionCounts[nextKey] || 0) + 1;
+
+  if (newPositionCounts[nextKey] >= 3 && status === 'playing') {
     status = 'draw';
   }
 
@@ -145,14 +166,11 @@ export function applyMove(
     fullMoveNumber,
     status,
     winner,
-    isCheck: inCheck,
-    legalMoves: nextLegalMoves.map(m => ({
-      from: m.from,
-      to: m.to,
-      promotion: m.promotion,
-    })),
+    isCheck: inCheck && status !== 'checkmate',
+    legalMoves: nextLegalMoves.map(m => ({ from: m.from, to: m.to, promotion: m.promotion })),
     timers: newTimers,
     lastMoveTimestamp: now,
+    positionCounts: newPositionCounts,
   };
 }
 

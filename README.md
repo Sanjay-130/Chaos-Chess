@@ -11,11 +11,20 @@ A modern, responsive, real-time multiplayer chess platform built from scratch. W
     *   *Rook* $\rightarrow$ Knight, Rook, Bishop, or Queen
     *   *Bishop* $\rightarrow$ Knight, Rook, Bishop, or Queen
     *   *Knight* $\rightarrow$ Knight, Rook, Bishop, or Queen
-*   **Color Preference Selection**: When hosting a room, creators can select their color preference: **Play as White** (moves first), **Play as Black** (moves second), or **Random** (a coin flip determines the color). The second player who joins is automatically assigned the opposite color.
+*   **Time Control Selector**: When creating a room, creators can select from popular presets (1 min, 3 min, 10 min, 15 min) or input a **custom time control** from 1 to 180 minutes.
+*   **Color Preference Selection**: Creators can select their color preference: **Play as White** (moves first), **Play as Black** (moves second), or **Random**.
 *   **Unchanged Pieces**:
     *   **King**: Always moves normally (including castling checks).
     *   **Pawn**: Always moves normally (including double-step, captures, and en passant).
-*   **Pawn Promotion**: Promoting a pawn allows selection of a Queen, Rook, Bishop, or Knight. Promoted pieces inherit the *currently active movement mapping* for that match.
+*   **Pawn Promotion**: Promoting a pawn allows selection of a Queen, Rook, Bishop, or Knight. Promoted pieces inherit the *active movement mapping* for that match.
+*   **Three-fold Repetition**: If the exact same board state, castling rights, active turn, and en passant squares repeat 3 times during the match, the game automatically concludes as a draw. The 50-move rule has been removed to allow games to play out.
+*   **Last Move Highlight**: The board highlights the *from* and *to* squares of the last move in yellow, ensuring you always know what just happened.
+*   **Game Review Mode**: Once a match ends, players can click the **Review Game** button to open an interactive move-by-move analysis board, complete with:
+    *   Interactive forward/backward navigation (with Arrow Keys support).
+    *   Full move list in standard algebraic notation.
+    *   **Piece Swaps Card**: A dashboard displaying the active movement mapping (e.g. Queen moves like Rook ⚡) for quick reference.
+*   **Full Rematch Flow**: Vote for a rematch directly from the Game Over dialog. Handle opponent requests, accept, decline, or cancel requests dynamically without leaving the room.
+*   **Custom Sound Effects**: Immersive audio cues for moves, piece captures, check, stalemate, timeouts, agreed draws, and distinct sounds for winning checkmate vs. losing checkmate. Users can easily toggle sounds ON/OFF on the home page.
 *   **Both Players Equal**: Both players receive the exact same rules.
 *   **Objective**: Deliver checkmate using the custom movement mechanics!
 

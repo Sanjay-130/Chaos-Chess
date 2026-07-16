@@ -80,6 +80,7 @@ export interface GameState {
   legalMoves: Array<{ from: number; to: number; promotion?: PieceType }>;
   timers: { white: number; black: number }; // milliseconds remaining
   lastMoveTimestamp?: number; // server timestamp when last move was made
+  positionCounts?: Record<string, number>; // Server-only: 3-fold repetition tracking (not sent to clients)
 }
 
 // ─── Player & Room ───────────────────────────────────────────────────────────
@@ -108,6 +109,7 @@ export interface RoomState {
   gameState: GameState | null;
   playAgainVotes: string[];
   countdownValue?: number;
+  timeControl: number; // in minutes
 }
 
 // ─── Socket Event Payloads ───────────────────────────────────────────────────
@@ -115,6 +117,7 @@ export interface RoomState {
 export interface CreateRoomPayload {
   nickname: string;
   colorPreference?: 'white' | 'black' | 'random';
+  timeControl?: number; // in minutes
 }
 
 export interface JoinRoomPayload {

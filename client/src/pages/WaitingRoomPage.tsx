@@ -93,6 +93,11 @@ export default function WaitingRoomPage() {
           </div>
           <div className="flex items-center gap-2">
             {isSpectator && <span className="badge badge-blue">SPECTATING</span>}
+            {roomState.timeControl && (
+              <span className="badge border px-2 py-1 text-[10px] font-bold" style={{ borderColor: '#6366f1', color: '#818cf8', background: 'rgba(99, 102, 241, 0.1)' }}>
+                {roomState.timeControl} MIN
+              </span>
+            )}
             {/* Live player count pill */}
             <div
               className="flex items-center gap-1.5 px-3 py-1 border text-xs font-bold tracking-wide"

@@ -3,9 +3,11 @@ import { socket } from './socket';
 import { useGameStore } from '../store/gameStore';
 import { useUIStore } from '../store/uiStore';
 import { SOCKET_EVENTS } from '@chaos-chess/shared';
+import { playSound } from '../utils/soundManager';
 
 export function useSocket() {
   const {
+    playerColor,
     setRoomState,
     setGameState,
     setRoomCode,
@@ -18,7 +20,7 @@ export function useSocket() {
     updateTimers,
   } = useGameStore();
 
-  const { setErrorMessage } = useUIStore();
+  const { setErrorMessage, setRematchDeclined } = useUIStore();
 
   useEffect(() => {
     function onConnect() {
@@ -77,10 +79,34 @@ export function useSocket() {
 
     function onMoveMade(payload: any) {
       setGameState(payload.gameState);
+      const move = payload.move;
+      if (move) {
+        if (move.isCheckmate) {
+          if (move.piece.color === playerColor) {
+            playSound('checkmate_won');
+          } else {
+            playSound('checkmate_lose');
+          }
+        } else if (move.isCheck) {
+          playSound('check');
+        } else if (move.capturedPiece) {
+          playSound('capture');
+        } else {
+          playSound('move');
+        }
+      }
     }
 
     function onGameOver(payload: any) {
       setGameState(payload.gameState);
+      const reason = payload.reason;
+      if (reason === 'stalemate') {
+        playSound('stalemate');
+      } else if (reason === 'draw') {
+        playSound('agreed_draw');
+      } else if (reason === 'timeout') {
+        playSound('timeout');
+      }
     }
 
     function onDrawOffered(payload: any) {
@@ -90,6 +116,11 @@ export function useSocket() {
     function onDrawDeclined() {
       setErrorMessage('Draw offer declined.');
       setTimeout(() => setErrorMessage(null), 3000);
+    }
+
+    function onRematchDeclined() {
+      setRematchDeclined(true);
+      setTimeout(() => setRematchDeclined(false), 5000);
     }
 
     function onReconnected(payload: any) {
@@ -144,6 +175,7 @@ export function useSocket() {
     socket.on(SOCKET_EVENTS.PLAYER_DISCONNECTED, onPlayerDisconnected);
     socket.on(SOCKET_EVENTS.PLAYER_RECONNECTED, onPlayerReconnected);
     socket.on('timer-tick', onTimerTick);
+    socket.on(SOCKET_EVENTS.REMATCH_DECLINED, onRematchDeclined);
     socket.on(SOCKET_EVENTS.ERROR, onError);
 
     // Initial check
@@ -168,6 +200,7 @@ export function useSocket() {
       socket.off(SOCKET_EVENTS.PLAYER_DISCONNECTED, onPlayerDisconnected);
       socket.off(SOCKET_EVENTS.PLAYER_RECONNECTED, onPlayerReconnected);
       socket.off('timer-tick', onTimerTick);
+      socket.off(SOCKET_EVENTS.REMATCH_DECLINED, onRematchDeclined);
       socket.off(SOCKET_EVENTS.ERROR, onError);
     };
   }, [
@@ -182,5 +215,6 @@ export function useSocket() {
     setCountdown,
     updateTimers,
     setErrorMessage,
+    setRematchDeclined,
   ]);
 }

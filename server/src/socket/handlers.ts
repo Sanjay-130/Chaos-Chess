@@ -3,22 +3,29 @@ import {
   CreateRoomPayload, JoinRoomPayload, PlayerReadyPayload,
   MakeMovePayload, ResignPayload, DrawOfferPayload,
   DrawResponsePayload, PlayAgainPayload, ReconnectPayload,
+  GameState,
 } from '@chaos-chess/shared';
 import { SOCKET_EVENTS } from '@chaos-chess/shared';
 import { roomManager } from '../rooms/roomManager';
+
+/** Strip server-only fields (positionCounts) before sending to clients */
+function strip(gs: GameState): GameState {
+  const { positionCounts: _d, ...rest } = gs;
+  return rest as GameState;
+}
 
 export function registerHandlers(io: SocketServer, socket: Socket): void {
 
   // ── create-room ────────────────────────────────────────────────────────────
   socket.on(SOCKET_EVENTS.CREATE_ROOM, (payload: CreateRoomPayload) => {
     try {
-      const { nickname, colorPreference } = payload;
+      const { nickname, colorPreference, timeControl } = payload;
       if (!nickname?.trim()) {
         socket.emit(SOCKET_EVENTS.ERROR, { message: 'Nickname is required' });
         return;
       }
 
-      const { room, color } = roomManager.createRoom(socket.id, nickname.trim(), colorPreference);
+      const { room, color } = roomManager.createRoom(socket.id, nickname.trim(), colorPreference, timeControl);
       socket.join(room.code);
 
       socket.emit(SOCKET_EVENTS.ROOM_CREATED, {
@@ -102,11 +109,11 @@ export function registerHandlers(io: SocketServer, socket: Socket): void {
 
       const { gameState, move } = result;
 
-      io.to(code).emit(SOCKET_EVENTS.MOVE_MADE, { gameState, move });
+      io.to(code).emit(SOCKET_EVENTS.MOVE_MADE, { gameState: strip(gameState), move });
 
       if (gameState.status !== 'playing') {
         io.to(code).emit(SOCKET_EVENTS.GAME_OVER, {
-          gameState,
+          gameState: strip(gameState),
           reason: gameState.status,
           winner: gameState.winner,
         });
@@ -124,7 +131,7 @@ export function registerHandlers(io: SocketServer, socket: Socket): void {
       if (!gameState) return;
 
       io.to(code).emit(SOCKET_EVENTS.GAME_OVER, {
-        gameState,
+        gameState: strip(gameState),
         reason: 'resigned',
         winner: gameState.winner,
       });
@@ -159,7 +166,7 @@ export function registerHandlers(io: SocketServer, socket: Socket): void {
       if (!gameState) return;
 
       io.to(code).emit(SOCKET_EVENTS.GAME_OVER, {
-        gameState,
+        gameState: strip(gameState),
         reason: 'draw',
       });
     } catch (err) {
@@ -176,7 +183,7 @@ export function registerHandlers(io: SocketServer, socket: Socket): void {
       const room = roomManager.getRoom(code);
       if (!room) return;
 
-      // Broadcast updated votes
+      // Broadcast updated votes so opponent sees the request
       io.to(code).emit(SOCKET_EVENTS.ROOM_UPDATED, {
         roomState: roomManager.getRoomState(room),
       });
@@ -195,6 +202,18 @@ export function registerHandlers(io: SocketServer, socket: Socket): void {
       }
     } catch (err) {
       socket.emit(SOCKET_EVENTS.ERROR, { message: 'Failed to vote play again' });
+    }
+  });
+
+  // ── decline-rematch ────────────────────────────────────────────────────────
+  socket.on(SOCKET_EVENTS.DECLINE_REMATCH, (payload: { code: string }) => {
+    try {
+      const { code } = payload;
+      roomManager.clearPlayAgainVotes(code);
+      // Notify the whole room that rematch was declined
+      socket.to(code).emit(SOCKET_EVENTS.REMATCH_DECLINED, {});
+    } catch (err) {
+      socket.emit(SOCKET_EVENTS.ERROR, { message: 'Failed to decline rematch' });
     }
   });
 

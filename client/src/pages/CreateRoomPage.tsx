@@ -13,9 +13,19 @@ const COLOR_OPTIONS: { value: ColorPref; label: string; piece: string; desc: str
   { value: 'black', label: 'Black', piece: '♚', desc: 'Move second' },
 ];
 
+const TIME_OPTIONS = [
+  { value: 1, label: '1 min' },
+  { value: 3, label: '3 min' },
+  { value: 10, label: '10 min' },
+  { value: 15, label: '15 min' },
+];
+
 export default function CreateRoomPage() {
   const [nicknameInput, setNicknameInput] = useState('');
   const [colorPref, setColorPref] = useState<ColorPref>('random');
+  const [timeControl, setTimeControl] = useState<number>(10);
+  const [customMode, setCustomMode] = useState(false);
+  const [customInput, setCustomInput] = useState('10');
   const [loading, setLoading] = useState(false);
   const { roomCode, setNickname } = useGameStore();
   const { errorMessage, setErrorMessage } = useUIStore();
@@ -33,6 +43,11 @@ export default function CreateRoomPage() {
       setErrorMessage('Nickname is required');
       return;
     }
+    const finalTime = customMode ? (parseInt(customInput, 10) || 10) : timeControl;
+    if (finalTime < 1 || finalTime > 180) {
+      setErrorMessage('Time must be between 1 and 180 minutes');
+      return;
+    }
     setLoading(true);
     setErrorMessage(null);
     setNickname(nicknameInput.trim());
@@ -40,6 +55,7 @@ export default function CreateRoomPage() {
     socket.emit(SOCKET_EVENTS.CREATE_ROOM, {
       nickname: nicknameInput.trim(),
       colorPreference: colorPref,
+      timeControl: finalTime,
     });
   };
 
@@ -149,6 +165,83 @@ export default function CreateRoomPage() {
               );
             })}
           </div>
+        </div>
+
+        {/* Time Control */}
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-semibold text-text-muted tracking-wider uppercase">
+              Time Control
+            </label>
+            <span className="text-xs font-bold" style={{ color: '#818cf8' }}>
+              {customMode ? (parseInt(customInput, 10) || 0) : timeControl} min
+            </span>
+          </div>
+
+          {/* Preset chips */}
+          <div className="grid grid-cols-5 gap-2">
+            {TIME_OPTIONS.map(({ value, label }) => {
+              const isSelected = !customMode && timeControl === value;
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => { setTimeControl(value); setCustomMode(false); }}
+                  style={{
+                    background: isSelected ? 'rgba(37, 99, 235, 0.1)' : 'transparent',
+                    borderColor: isSelected ? '#2563eb' : '#1e2d3d',
+                    color: isSelected ? '#f0f6ff' : '#7c8fa6',
+                    transition: 'all 0.15s ease',
+                  }}
+                  className="flex items-center justify-center py-2 px-1 border rounded cursor-pointer text-xs font-bold"
+                >
+                  {label}
+                </button>
+              );
+            })}
+            {/* Custom button */}
+            <button
+              type="button"
+              onClick={() => setCustomMode(true)}
+              style={{
+                background: customMode ? 'rgba(99,102,241,0.1)' : 'transparent',
+                borderColor: customMode ? '#6366f1' : '#1e2d3d',
+                color: customMode ? '#a5b4fc' : '#7c8fa6',
+                transition: 'all 0.15s ease',
+              }}
+              className="flex items-center justify-center py-2 px-1 border rounded cursor-pointer text-xs font-bold"
+            >
+              CUSTOM
+            </button>
+          </div>
+
+          {/* Custom input — slides in when CUSTOM is selected */}
+          {customMode && (
+            <div className="flex items-center gap-2 mt-1">
+              <input
+                type="number"
+                min={1}
+                max={180}
+                value={customInput}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setCustomInput(val);
+                }}
+                onBlur={() => {
+                  const n = parseInt(customInput, 10);
+                  if (!n || n < 1) setCustomInput('1');
+                  if (n > 180) setCustomInput('180');
+                }}
+                className="input text-center font-bold text-lg"
+                style={{ width: 80, padding: '6px 8px' }}
+                autoFocus
+                placeholder="min"
+              />
+              <span className="text-xs text-text-secondary">
+                minutes &nbsp;(1 – 180)
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Actions */}

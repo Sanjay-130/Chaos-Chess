@@ -18,6 +18,7 @@ export default function GamePage() {
   const { code } = useParams<{ code: string }>();
   const navigate = useNavigate();
   const [showReview, setShowReview] = useState(false);
+  const [showStartRules, setShowStartRules] = useState(true);
 
   const {
     roomState,
@@ -30,7 +31,7 @@ export default function GamePage() {
     setDrawOfferFrom,
   } = useGameStore();
 
-  const { errorMessage, setErrorMessage } = useUIStore();
+  const { errorMessage, setErrorMessage, rematchDeclined, setRematchDeclined } = useUIStore();
 
   // Reconnection check
   useEffect(() => {
@@ -90,6 +91,55 @@ export default function GamePage() {
     <div className="max-w-6xl w-full mx-auto px-4 py-6 animate-fade-in flex flex-col min-h-[90vh]">
       {/* Game Review Modal */}
       {showReview && <GameReview onClose={() => setShowReview(false)} />}
+
+      {/* Scrambled Rules Popup Overlay */}
+      {showStartRules && gameState.status === 'playing' && (
+        <div className="fixed inset-0 bg-bg-primary/95 flex flex-col items-center justify-center z-[140] animate-fade-in p-6">
+          <div className="max-w-md w-full panel p-8 border-2 border-accent-blue space-y-6 text-center">
+            <div>
+              <span className="badge badge-amber font-bold mb-2">MATCH GENERATED</span>
+              <h1 className="text-3xl font-black tracking-wider text-text-primary">SCRAMBLED RULES</h1>
+              <p className="text-xs text-text-secondary mt-1">
+                Before starting to play, review the active movement mapping for this match:
+              </p>
+            </div>
+
+            <div className="space-y-2 text-left">
+              {(['queen', 'rook', 'bishop', 'knight'] as const).map((piece) => {
+                const movesLike = gameState.ruleMapping[piece];
+                const isSwapped = movesLike !== piece;
+                const pieceIcons: Record<string, string> = {
+                  queen: '♛', rook: '♜', bishop: '♝', knight: '♞',
+                };
+                return (
+                  <div
+                    key={piece}
+                    className="flex items-center justify-between px-4 py-3 rounded font-mono text-sm bg-bg-secondary border border-border-dim"
+                  >
+                    <span className="font-bold text-text-primary">
+                      {pieceIcons[piece]} {piece.toUpperCase()}
+                    </span>
+                    <span className="text-text-dim">➔</span>
+                    <span className="font-bold text-accent-bright">
+                      {pieceIcons[movesLike]} {movesLike.toUpperCase()}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="pt-2">
+              <button
+                onClick={() => setShowStartRules(false)}
+                className="btn btn-primary w-full justify-center font-bold py-3 text-sm tracking-wide"
+                style={{ background: 'linear-gradient(135deg, #2563eb, #3b82f6)' }}
+              >
+                GOT IT, LET'S PLAY!
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Promotion Modal Overlay */}
       <PromotionModal />
@@ -177,15 +227,91 @@ export default function GamePage() {
             </div>
           )}
 
-          {/* Review Game Button (visible after game ends) */}
-          {gameState.status !== 'playing' && gameState.moveHistory.length > 0 && (
-            <button
-              onClick={() => setShowReview(true)}
-              className="btn btn-primary w-full justify-center mt-2"
-              style={{ background: 'linear-gradient(135deg, #1e3a5f, #2563eb)' }}
-            >
-              🔍 REVIEW GAME
-            </button>
+          {/* Review Game & Rematch Button (visible after game ends) */}
+          {gameState.status !== 'playing' && (
+            <div className="space-y-2 mt-2 pt-2 border-t border-border-dim">
+              {gameState.moveHistory.length > 0 && (
+                <button
+                  onClick={() => setShowReview(true)}
+                  className="btn btn-primary w-full justify-center"
+                  style={{ background: 'linear-gradient(135deg, #1e3a5f, #2563eb)' }}
+                >
+                  🔍 REVIEW GAME
+                </button>
+              )}
+
+              {!isSpectator && (() => {
+                const votes = roomState.playAgainVotes || [];
+                const mySocketId = socket.id ?? '';
+                const iHaveVoted = votes.includes(mySocketId);
+                const oppHasVoted = votes.some((id) => id !== mySocketId);
+                const opp = roomState.players.find((p) => votes.includes(p.socketId));
+                const oppName = opp?.nickname ?? 'Opponent';
+
+                if (rematchDeclined) {
+                  return (
+                    <button
+                      onClick={() => {
+                        socket.emit(SOCKET_EVENTS.PLAY_AGAIN, { code: roomCode });
+                      }}
+                      className="btn btn-secondary w-full justify-center font-bold text-xs"
+                    >
+                      🔄 REQUEST REMATCH (Declined)
+                    </button>
+                  );
+                }
+
+                if (oppHasVoted && !iHaveVoted) {
+                  return (
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => {
+                          socket.emit(SOCKET_EVENTS.DECLINE_REMATCH, { code: roomCode });
+                          setRematchDeclined(false);
+                        }}
+                        className="btn btn-secondary justify-center font-bold text-xs"
+                      >
+                        DECLINE
+                      </button>
+                      <button
+                        onClick={() => {
+                          socket.emit(SOCKET_EVENTS.PLAY_AGAIN, { code: roomCode });
+                        }}
+                        className="btn btn-primary justify-center font-bold text-xs"
+                        style={{ background: 'linear-gradient(135deg,#166534,#22c55e)' }}
+                      >
+                        ACCEPT
+                      </button>
+                    </div>
+                  );
+                }
+
+                if (iHaveVoted) {
+                  return (
+                    <button
+                      onClick={() => {
+                        socket.emit(SOCKET_EVENTS.DECLINE_REMATCH, { code: roomCode });
+                      }}
+                      className="btn btn-secondary w-full justify-center text-xs"
+                    >
+                      🚫 CANCEL REQUEST
+                    </button>
+                  );
+                }
+
+                return (
+                  <button
+                    onClick={() => {
+                      socket.emit(SOCKET_EVENTS.PLAY_AGAIN, { code: roomCode });
+                    }}
+                    className="btn btn-primary w-full justify-center font-bold text-xs"
+                    style={{ background: 'linear-gradient(135deg, #166534, #22c55e)' }}
+                  >
+                    🔄 REQUEST REMATCH
+                  </button>
+                );
+              })()}
+            </div>
           )}
 
           {/* Leave Button */}

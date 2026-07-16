@@ -111,73 +111,9 @@ chaos-chess/
 
 ---
 
-## 🚀 How to Run the Project Locally
+## 💻 Local Development
 
-### Prerequisites
-Make sure you have [Node.js](https://nodejs.org/) installed (v18+ recommended).
+Want to run Chaos Chess on your own machine? Check out our step-by-step setup guide:
 
-### 1. Installation
-In the root directory of the project, run:
-```bash
-npm install
-```
-This command leverages npm workspaces to automatically install dependencies across the `shared`, `server`, and `client` directories.
+👉 **[Local Development & Setup Guide](file:///d:/Projects/Chaos-Chess/RUN_LOCALLY.md)**
 
----
-
-### 2. Running in Development Mode
-
-#### Option A: Running from the Root Directory (Single Terminal)
-You can run the client or server scripts directly from the workspace root:
-```bash
-# Run backend server (default: port 3001)
-npm run dev:server
-
-# Run frontend client (default: port 5173)
-npm run dev:client
-```
-
-#### Option B: Running Separately (Separate Terminals)
-If you prefer to run the client and server in separate terminal windows, navigate to their respective directories:
-
-**Terminal 1 (Backend Server):**
-```bash
-cd server
-npm run dev
-```
-
-**Terminal 2 (Frontend Client):**
-```bash
-cd client
-npm run dev
-```
-
-Open [http://localhost:5173](http://localhost:5173) in your browser. Open multiple windows/private tabs to test player lobbies and spectators.
-
----
-
-### 3. Production Build & Execution
-To verify compiler checks and run a production bundle locally:
-
-```bash
-# Build the server and client assets
-npm run build:server
-npm run build:client
-
-# Start the compiled backend server
-cd server
-npm run start
-```
-
----
-
-## 🔍 Validation Checklist
-To verify typescript type safety across folders:
-```bash
-# Check server compilation
-cd server && npx tsc --noEmit
-
-# Check client compilation
-cd client && npx tsc --noEmit
-```
-Both commands will finish with an exit code of `0`, confirming complete type-safety.
